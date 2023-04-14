@@ -1,0 +1,17 @@
+torch
+ttkbootstrap==1.10.0
+omegaconf
+pysptools
+scipy
+matplotlib
+torchmetrics==0.10.0
+tqdm
+opencv-python
+imutils
+scikit-image
+pytorch_metric_learning
+albumentations
+imgviz
+utm
+pyqt5
+pandas
