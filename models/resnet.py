@@ -1,15 +1,22 @@
-import json
-
+from PIL import Image
 from torchvision import models, transforms
 
 
 def get_model():
+    """
+    Load the model
+    :return: model
+    """
     model = models.resnet18(pretrained=False, num_classes=1000)
     return model
 
 
-def pre_processing(input_image):
-    # Define the transform to apply to the input image
+def pre_processing(input_json):
+    """
+    Take the input from the JSON and parse it to reuturn the correct tensor for inference
+    :param input_json:
+    :return: Tensor
+    """
     transform = transforms.Compose([
         transforms.Resize(512),
         transforms.ToTensor(),
@@ -17,13 +24,15 @@ def pre_processing(input_image):
     ])
 
     # Apply the transform to the input image and add a batch dimension
-    return transform(input_image).unsqueeze(0)
+    img = Image.open(input_json.image)
+    return transform(img).unsqueeze(0)
 
 
 def post_processing(output_tensor):
-    # Convert the tensor to a JSON-serializable dictionary
-    tensor_dict = {'data': output_tensor.tolist()}
+    """
+    Take the tensor output and return a JSON
+    :param output_tensor: output of the model
+    :return: JSON
+    """
 
-    # Save it to file
-    with open('json/results.json', 'w') as f:
-        json.dump(tensor_dict, f)
+    return {"prediction": output_tensor.tolist()}

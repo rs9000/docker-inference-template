@@ -13,7 +13,7 @@ This repository contains a template for creating a Docker image that can be used
 
 - Clone this repository to your local machine:
     ```
-    git clone https://github.com/example/docker-inference-template.git
+    git clone https://github.com/rs9000/docker-inference-template.git
     ```
 
 - Build the Docker image:
