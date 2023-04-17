@@ -1,5 +1,0 @@
-{
-  "image": "./images/sample.jpg",
-  "checkpoint": "./checkpoints/resnet18-5c106cde.pth",
-  "model_name": "resnet"
-}
