@@ -16,3 +16,5 @@ utm
 pyqt5
 pandas
 torchvision
+uvicorn
+fastapi
