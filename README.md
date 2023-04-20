@@ -52,7 +52,7 @@ This repository contains a Docker image template that can be used for deploying 
 ### Example of HTTP request to the inference server
 
 ```
-POST http://127.0.0.1:8000 
+POST http://127.0.0.1:8000/predict
 {
   "image": "./images/sample.jpg",
   "checkpoint": "./checkpoints/resnet18-5c106cde.pth",
