@@ -16,18 +16,18 @@ class StableDiffusion2(ZooModel):
         self.http_request = {
             "positive_prompt": "An image of an helicopter flying in front of a mountain, high quality",
             "negative_prompt": "low quality",
-            "checkpoint": "./checkpoints/efficientnet_b0_rwightman-3dd342df.pth",
-            "model_name": "stablediffusion2"
+            "model_name": "stablediffusion2",
+            "save_path": "./sd.png"
         }
 
-    def get_model(self):
+    def load_model(self):
         """
         Load the model
         :return: model
         """
         model = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1-base",
                                                         torch_dtype=torch.float32)
-        return model
+        self.model = model.to(self.device)
 
     def pre_processing(self):
         """
@@ -35,8 +35,8 @@ class StableDiffusion2(ZooModel):
         :return: args, kargs
         """
 
-        args = {"positve_prompt": self.input_json["positive_prompt"]}
-        kargs = {"negative_prompt": self.input_json["negative_prompt"]}
+        args = {"positve_prompt": self.input_json.data["positive_prompt"]}
+        kargs = {"negative_prompt": self.input_json.data["negative_prompt"]}
         return args, kargs
 
     def post_processing(self, output_tensor):
@@ -45,6 +45,6 @@ class StableDiffusion2(ZooModel):
         :return: JSON
         """
         img = output_tensor.images[0]
-        out_file = self.input_json["save_path"]
+        out_file = self.input_json.data["save_path"]
         img.save(out_file)
         return {"img_generated": out_file}

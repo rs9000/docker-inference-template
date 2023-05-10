@@ -1,4 +1,6 @@
 import importlib
+from typing import Any, Dict
+
 import torch
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -10,16 +12,21 @@ print(f"Running on device: {device}")
 app = FastAPI()
 
 
+class DynamicItem(BaseModel):
+    data: Dict[str, Any]
+
+
 @app.post("/predict/")
-async def predict(input_json):
+async def predict(input_json: DynamicItem):
     print(input_json)
 
-    if "checkpoint" in input_json.keys():
-        checkpoint = input_json["checkpoint"]
+    print(input_json.data)
+    if "checkpoint" in input_json.data.keys():
+        checkpoint = input_json.data["checkpoint"]
     else:
         checkpoint = None
 
-    model_name = input_json["model_name"]
+    model_name = input_json.data["model_name"]
 
     # Load the Models in the zoo
     module = importlib.import_module("models." + model_name)
@@ -30,6 +37,7 @@ async def predict(input_json):
         # Instantiate the model
         model_class = getattr(module, class_name)
         model = model_class(input_json)
+        model.load_model()
     else:
         print("Model not found in the registry.")
 
@@ -48,15 +56,15 @@ async def predict(input_json):
 
 if __name__ == "__main__":
     # Tests
-    predict(input_json={"image": "./images/sample.jpg",
+    predict(input_json=DynamicItem(data={"image": "./images/sample.jpg",
                         "checkpoint": "./checkpoints/resnet18-5c106cde.pth",
-                        "model_name": "resnet18"})
+                        "model_name": "resnet18"}))
 
-    predict(input_json={"image": "./images/sample.jpg",
+    predict(input_json=DynamicItem(data={"image": "./images/sample.jpg",
                         "checkpoint": "./checkpoints/efficientnet_b0_rwightman-3dd342df.pth",
-                        "model_name": "efficientnet_b0"})
+                        "model_name": "efficientnet_b0"}))
 
-    predict(input_json={"positive_prompt": "An image of an helicopter flying in front of a mountain, high quality",
+    predict(input_json=DynamicItem(data={"positive_prompt": "An image of an helicopter flying in front of a mountain, high quality",
                         "negative_prompt": "low quality",
                         "model_name": "stablediffusion2",
-                        "save_path": "./df.png"})
+                        "save_path": "./df.png"}))

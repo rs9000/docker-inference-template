@@ -19,3 +19,5 @@ torchvision
 uvicorn
 fastapi
 streamlit
+transformers
+accelerate

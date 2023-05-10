@@ -16,14 +16,14 @@ class EfficientNetB0(ZooModel):
                              "model_name": "efficientnet_b0"
                              }
 
-    def get_model(self):
+    def load_model(self):
         """
         Load the model
         :return: model
         """
         model = models.efficientnet_b0(pretrained=False, num_classes=1000)
         model.eval()
-        return model
+        self.model = model.to(self.device)
 
     def pre_processing(self):
         """
@@ -37,7 +37,7 @@ class EfficientNetB0(ZooModel):
         ])
 
         # Apply the transform to the input image and add a batch dimension
-        img = Image.open(self.input_json["image"])
+        img = Image.open(self.input_json.data["image"])
         img = transform(img).unsqueeze(0)
         args = {"img": img.to(self.device)}
         kargs = {}

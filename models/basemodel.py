@@ -12,10 +12,10 @@ class ZooModel(ABC):
 
         self.input_json = input_json
         self.device = "cuda" if torch.cuda.is_available() else 'cpu'
-        self.model = self.get_model().to(self.device)
+        self.model = None
 
     @abstractmethod
-    def get_model(self):
+    def load_model(self):
         """Abstract method to get the model"""
         Exception("Not implemented")
         pass
