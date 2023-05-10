@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import torch
-device = "cuda" if torch.cuda.is_available() else 'cpu'
 
 
 class ZooModel(ABC):
@@ -12,8 +11,8 @@ class ZooModel(ABC):
                              }
 
         self.input_json = input_json
-        self.model = self.get_model().to(device)
-        self.model.eval()
+        self.device = "cuda" if torch.cuda.is_available() else 'cpu'
+        self.model = self.get_model().to(self.device)
 
     @abstractmethod
     def get_model(self):
@@ -34,7 +33,7 @@ class ZooModel(ABC):
         pass
 
     def predict(self):
-        x = self.pre_processing().to(device)
-        y = self.model(x)
+        args, kargs = self.pre_processing()
+        y = self.model(*args.values(), **kargs)
         y1 = self.post_processing(y)
         return y1

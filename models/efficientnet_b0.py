@@ -22,12 +22,13 @@ class EfficientNetB0(ZooModel):
         :return: model
         """
         model = models.efficientnet_b0(pretrained=False, num_classes=1000)
+        model.eval()
         return model
 
     def pre_processing(self):
         """
-        Take self.input_json and parse it to return the correct tensor for inference
-        :return: Tensor
+        Take self.input_json and parse it to return the correct arguments for the model inference
+        :return: args, kargs
         """
         transform = transforms.Compose([
             transforms.Resize(512),
@@ -36,8 +37,11 @@ class EfficientNetB0(ZooModel):
         ])
 
         # Apply the transform to the input image and add a batch dimension
-        img = Image.open(self.input_json.image)
-        return transform(img).unsqueeze(0)
+        img = Image.open(self.input_json["image"])
+        img = transform(img).unsqueeze(0)
+        args = {"img": img.to(self.device)}
+        kargs = {}
+        return args, kargs
 
     def post_processing(self, output_tensor):
         """
