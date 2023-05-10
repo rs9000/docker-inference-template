@@ -18,3 +18,4 @@ pandas
 torchvision
 uvicorn
 fastapi
+streamlit

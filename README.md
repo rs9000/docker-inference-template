@@ -1,4 +1,5 @@
-# Docker Inference modelstore
+# Docker Inference ModelZoo
+<img src="./images/logo.png" width="200">
 
 This repository contains a Docker image template that can be used for deploying deep learning models for inference.
 
@@ -37,21 +38,56 @@ This repository contains a Docker image template that can be used for deploying 
   ex. transformer.py
 
 
-- Custom models must have the following 3 methods:
-  - **get_model()**: A method that return your custom model
-  - **pre_processing(input_file)**: A method that takes the JSON request and perform prepocessing to return a input for your model
-  - **post_processing(output_tensor)**: A method that takes your model output and return a JSON output
-  
+- Custom models must be classes inheriting from ZooModel 
+  and must define the following methods:
+
+```python
+from models.basemodel import ZooModel
+
+class CustomModel(ZooModel):
+    def __init__(self, input_json):
+        super().__init__(input_json)
+        self.description = "Custom model description"
+        self.http_request = {"image": "./images/sample.jpg",
+                             "checkpoint": "./checkpoints/checkpoint.pth",
+                             "model_name": "custom_model"
+                             }
+
+    def get_model(self):
+        """
+        Load the model
+        :return: model
+        """
+        model = # Custom model definition
+        return model
+
+    def pre_processing(self):
+        """
+        Take self.input_json and parse it to return the correct tensor for inference
+        :return: Tensor
+        """
+        
+        input_tensor = something(self.input_json)
+        return input_tensor
+
+    def post_processing(self, output_tensor):
+        """
+        Take output_tensor and return a JSON
+        :return: JSON
+        """
+      
+        output_json = something(output_tensor)
+        return output_json
+```
 
 - Put your model checkpoint in the ./checkpoints folder
-
-
+- Register your model in model_registry.py
 - Rebuild the docker image
 
 
 ### Example of HTTP request to the inference server
 
-```
+```json
 POST http://127.0.0.1:8000/predict
 {
   "image": "./images/sample.jpg",
@@ -60,7 +96,7 @@ POST http://127.0.0.1:8000/predict
 }
 ```
 
-```
+```json
 RESPONSE 200 OK
 {
     "prediction": [

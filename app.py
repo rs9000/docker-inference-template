@@ -2,6 +2,8 @@ import importlib
 import torch
 from fastapi import FastAPI
 from pydantic import BaseModel
+from model_registry import model_registry
+
 
 device = "cuda" if torch.cuda.is_available() else 'cpu'
 print(f"Running on device: {device}")
@@ -17,28 +19,34 @@ class Item(BaseModel):
 
 @app.post("/predict/")
 async def predict(input_json: Item):
-    input_data = input_json
-    print(input_data)
+    print(input_json)
 
-    checkpoint = input_data.checkpoint
-    model_name = input_data.model_name
+    checkpoint = input_json.checkpoint
+    model_name = input_json.model_name
 
-    # Load the PyTorch model
+    # Load the Models in the zoo
     module = importlib.import_module("models." + model_name)
-    model = module.get_model()
-    checkpoint = torch.load(checkpoint)
-    model.load_state_dict(checkpoint)
-    model.to(device)
+    class_name = model_registry.get(model_name)
 
-    # Set the model to evaluation mode
-    model.eval()
+    # Check if the model class name exists in the registry
+    if class_name:
+        # Instantiate the model
+        model_class = getattr(module, class_name)
+        model = model_class(input_json)
+    else:
+        print("Model not found in the registry.")
 
-    # Apply the transform to the input image and add a batch dimension
-    input_tensor = module.pre_processing(input_data).to(device)
+    # Load the model weights
+    checkpoint = torch.load(checkpoint, map_location='cpu')
+    model.model.load_state_dict(checkpoint)
 
     # Make a prediction on the input image using the PyTorch model
     with torch.no_grad():
-        output_tensor = model(input_tensor)
+        json_out = model.predict()
 
-    json_out = module.post_processing(output_tensor)
+    print(json_out)
     return json_out
+
+
+if __name__ == "__main__":
+    predict(input_json=Item(image="./images/sample.jpg", checkpoint="./checkpoints/efficientnet_b0_rwightman-3dd342df.pth", model_name="efficientnet_b0"))
