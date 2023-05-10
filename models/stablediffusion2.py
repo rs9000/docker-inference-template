@@ -13,12 +13,11 @@ class StableDiffusion2(ZooModel):
     def __init__(self, input_json):
         super().__init__(input_json)
         self.description = "StableDiffusion2 model allows to generate images from text"
-        self.http_request = {
-            "positive_prompt": "An image of an helicopter flying in front of a mountain, high quality",
-            "negative_prompt": "low quality",
-            "model_name": "stablediffusion2",
-            "save_path": "./sd.png"
-        }
+        self.http_request = {"data": {"positive_prompt": "An image of an helicopter flying in front of a mountain, high quality",
+                                      "negative_prompt": "low quality",
+                                      "model_name": "stablediffusion2",
+                                      "save_path": "./sd.png"}
+                             }
 
     def load_model(self):
         """
@@ -47,4 +46,4 @@ class StableDiffusion2(ZooModel):
         img = output_tensor.images[0]
         out_file = self.input_json.data["save_path"]
         img.save(out_file)
-        return {"img_generated": out_file}
+        return {"image": out_file}

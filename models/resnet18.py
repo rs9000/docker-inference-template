@@ -11,10 +11,10 @@ class ResNet18(ZooModel):
     def __init__(self, input_json):
         super().__init__(input_json)
         self.description = "ResNet18 model trained on ImageNet"
-        self.http_request = {"image": "./images/sample.jpg",
-                             "checkpoint": "./checkpoints/resnet18-5c106cde.pth",
-                             "model_name": "resnet18"
-                             }
+        self.http_request = {"data": {"image": "./images/sample.jpg",
+                                      "checkpoint": "./checkpoints/resnet18-5c106cde.pth",
+                                      "model_name": "resnet18"
+                                      }}
 
     def load_model(self):
         """

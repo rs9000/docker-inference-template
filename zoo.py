@@ -2,6 +2,8 @@ import json
 import streamlit as st
 import importlib
 import requests as req
+from PIL import Image
+
 from model_registry import model_registry
 
 
@@ -35,7 +37,7 @@ st.title('Model Zoo')
 st.image("./images/logo.png", width=250)
 st.write(f"Found **{len(model_registry)}** models in the zoo")
 
-search_term = st.text_input("", placeholder="Filter models by name")
+search_term = st.text_input("Search", placeholder="Filter models by name")
 
 # Filter the dictionary based on the search term
 filtered_data = {
@@ -58,18 +60,26 @@ for file_name, class_name in filtered_data.items():
             block += f"{k}:  {v} \n"
         for k, v in models[file_name].http_request.items():
             block += f"{k}: {v} \n"
-        st.code(block, language="http")
 
-        if st.button("Execute HTTP Request", key=file_name):
+        st.code(block, language="http")
+        text_area = st.text_area("Edit Payload", str(models[file_name].http_request).replace("'", "\""), key=file_name + "_editblock")
+
+        if st.button("Execute HTTP Request", key=file_name + "_request"):
+            payload = eval(text_area)
+
             # HTTP request is triggered when the button is clicked
             with st.spinner("Loading..."):
                 # HTTP request is triggered when the button is clicked
-                response = req.post(api_entrypoint, json=models[file_name].http_request)
+                response = req.post(api_entrypoint, json=payload)
 
             # Process the response
             if response.status_code == 200:
                 st.success("HTTP request successful!")
                 st.code(response.text, language="json")
+                response_dict = response.json()
+                if "image" in response_dict.keys():
+                    image = Image.open(response_dict["image"])
+                    st.image(image, caption="Returned Image", use_column_width=True)
             else:
                 st.error("HTTP request failed!")
                 st.code(response.text)

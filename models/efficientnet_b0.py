@@ -11,10 +11,10 @@ class EfficientNetB0(ZooModel):
     def __init__(self, input_json):
         super().__init__(input_json)
         self.description = "EfficientNetB0 model trained on ImageNet"
-        self.http_request = {"image": "./images/sample.jpg",
-                             "checkpoint": "./checkpoints/efficientnet_b0_rwightman-3dd342df.pth",
-                             "model_name": "efficientnet_b0"
-                             }
+        self.http_request = {"data": {"image": "./images/sample.jpg",
+                                      "checkpoint": "./checkpoints/efficientnet_b0_rwightman-3dd342df.pth",
+                                      "model_name": "efficientnet_b0"
+                                      }}
 
     def load_model(self):
         """

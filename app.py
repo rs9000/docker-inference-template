@@ -18,8 +18,6 @@ class DynamicItem(BaseModel):
 
 @app.post("/predict/")
 async def predict(input_json: DynamicItem):
-    print(input_json)
-
     print(input_json.data)
     if "checkpoint" in input_json.data.keys():
         checkpoint = input_json.data["checkpoint"]
