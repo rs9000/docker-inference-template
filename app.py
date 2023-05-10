@@ -4,12 +4,23 @@ from typing import Any, Dict
 import torch
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+
 from model_registry import model_registry
 
 device = "cuda" if torch.cuda.is_available() else 'cpu'
 print(f"Running on device: {device}")
 
 app = FastAPI()
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class DynamicItem(BaseModel):
@@ -55,14 +66,15 @@ async def predict(input_json: DynamicItem):
 if __name__ == "__main__":
     # Tests
     predict(input_json=DynamicItem(data={"image": "./images/sample.jpg",
-                        "checkpoint": "./checkpoints/resnet18-5c106cde.pth",
-                        "model_name": "resnet18"}))
+                                         "checkpoint": "./checkpoints/resnet18-5c106cde.pth",
+                                         "model_name": "resnet18"}))
 
     predict(input_json=DynamicItem(data={"image": "./images/sample.jpg",
-                        "checkpoint": "./checkpoints/efficientnet_b0_rwightman-3dd342df.pth",
-                        "model_name": "efficientnet_b0"}))
+                                         "checkpoint": "./checkpoints/efficientnet_b0_rwightman-3dd342df.pth",
+                                         "model_name": "efficientnet_b0"}))
 
-    predict(input_json=DynamicItem(data={"positive_prompt": "An image of an helicopter flying in front of a mountain, high quality",
-                        "negative_prompt": "low quality",
-                        "model_name": "stablediffusion2",
-                        "save_path": "./df.png"}))
+    predict(input_json=DynamicItem(
+        data={"positive_prompt": "An image of an helicopter flying in front of a mountain, high quality",
+              "negative_prompt": "low quality",
+              "model_name": "stablediffusion2",
+              "save_path": "./df.png"}))

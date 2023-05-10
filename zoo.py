@@ -25,7 +25,7 @@ def set_logs(logs, model_name, key, value):
 
 # Load the Models in the zoo
 module_dir = 'models'
-api_entrypoint = "http://localhost:8000/predict"
+api_entrypoint = "http://localhost:8000/predict/"
 models = {}
 
 for file_name, class_name in model_registry.items():

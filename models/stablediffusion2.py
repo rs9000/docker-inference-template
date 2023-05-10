@@ -13,19 +13,21 @@ class StableDiffusion2(ZooModel):
     def __init__(self, input_json):
         super().__init__(input_json)
         self.description = "StableDiffusion2 model allows to generate images from text"
-        self.http_request = {"data": {"positive_prompt": "An image of an helicopter flying in front of a mountain, high quality",
-                                      "negative_prompt": "low quality",
-                                      "model_name": "stablediffusion2",
-                                      "save_path": "./sd.png"}
-                             }
+        self.http_request = {
+            "data": {"positive_prompt": "An image of an helicopter flying in front of a mountain, high quality",
+                     "negative_prompt": "low quality",
+                     "model_name": "stablediffusion2",
+                     "save_path": "./sd.png"}
+            }
 
     def load_model(self):
         """
         Load the model
         :return: model
         """
-        model = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1-base",
+        model = StableDiffusionPipeline.from_pretrained("./checkpoints/stablediffusion2",
                                                         torch_dtype=torch.float32)
+
         self.model = model.to(self.device)
 
     def pre_processing(self):
