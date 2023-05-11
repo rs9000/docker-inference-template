@@ -1,4 +1,8 @@
 torch
+torchvision
+diffusers
+transformers
+accelerate
 ttkbootstrap==1.10.0
 omegaconf
 pysptools
@@ -15,9 +19,6 @@ imgviz
 utm
 pyqt5
 pandas
-torchvision
 uvicorn
 fastapi
 streamlit
-transformers
-accelerate
