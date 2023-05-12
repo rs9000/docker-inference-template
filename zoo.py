@@ -3,7 +3,6 @@ import streamlit as st
 import importlib
 import requests as req
 from PIL import Image
-
 from model_registry import model_registry
 
 

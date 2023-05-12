@@ -12,7 +12,7 @@ device = "cuda" if torch.cuda.is_available() else 'cpu'
 print(f"Running on device: {device}")
 
 app = FastAPI()
-origins = ["*"]
+origins = ["localhost"]
 
 app.add_middleware(
     CORSMiddleware,
